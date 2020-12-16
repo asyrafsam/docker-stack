@@ -12,7 +12,7 @@ services:
         environment:
             # ALLOW_EMPTY_PASSWORD is recommended only for development.
             # - "MYSQL_ALLOW_EMPTY_PASSWORD=yes"
-            - "MYSQL_ROOT_PASSWORD=12345"
+            - "MYSQL_ROOT_PASSWORD=$#&12345!"
             - "SET GLOBAL sql_mode =''"
         networks:
             - docker_webstack
@@ -35,7 +35,7 @@ services:
             - docker_webstack
     php7.fpm:
         build: php-stack-7-fpm
-        container_name: "php7.fpm"
+        container_name: "php7.4.fpm"
         restart: always
         volumes:
             - "./etc/php/php.ini:/usr/local/etc/php/conf.d/php.ini"
@@ -50,6 +50,18 @@ services:
             - "./etc/php/php.ini:/usr/local/etc/php/conf.d/php.ini"
             - "./projects/:/var/www/projects"
         networks:
+            - docker_webstack
+    sql-server:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        container_name: sql-server
+        volumes:
+            - "./db/mssql:/var/lib/mssql:rw"
+        environment:
+            - SA_PASSWORD=Pass@word
+            - ACCEPT_EULA=Y
+        ports:
+            - "1433:1433"
+        networks: 
             - docker_webstack
 networks:
     docker_webstack:
