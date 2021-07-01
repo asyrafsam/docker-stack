@@ -12,8 +12,8 @@ services:
         environment:
             # ALLOW_EMPTY_PASSWORD is recommended only for development.
             # - "MYSQL_ALLOW_EMPTY_PASSWORD=yes"
-            - "MYSQL_ROOT_PASSWORD=$#&12345!"
-            - "SET GLOBAL sql_mode =''"
+            - "MYSQL_ROOT_PASSWORD=12345"
+            # - "SET GLOBAL sql_mode =''"
         networks:
             - docker_webstack
     nginx:
@@ -63,6 +63,33 @@ services:
             - "1433:1433"
         networks: 
             - docker_webstack
+    mongo:
+        image: mongo
+        container_name: "mongo"
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=mongodb
+            - MONGO_INITDB_ROOT_PASSWORD=mongodb
+        restart: on-failure
+        volumes:
+                - "./mongo:/data/db"
+        ports:
+            - "27017:27017"
+        command: [--auth]
+        networks:
+            - docker_webstack
+    postgres:
+        image: postgres:latest
+        restart: always
+        ports:
+            - 5432:5432
+        environment:
+            - POSTGRES_DB=postgres
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+        volumes:
+            - ./data/db:/var/lib/postgresql/data
+        networks:
+                - docker_webstack
 networks:
     docker_webstack:
         driver: bridge
